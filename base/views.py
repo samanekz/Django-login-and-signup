@@ -4,7 +4,14 @@ from django.http import HttpResponse
 # Create your views here.
 
 def home(request):
-    return HttpResponse('HoemPage')
+    return render(request, 'base/home.html')
 
-def room(request):
-    return HttpResponse('Room')
+def register(request):
+    return HttpResponse('register')
+
+def login(request):
+    return render(request, 'base/login.html')
+
+def dashbord(request):
+    return HttpResponse('dashbord')
+
