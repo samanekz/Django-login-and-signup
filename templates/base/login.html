@@ -20,12 +20,20 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="login-box">
-                        <form action= "signup" >
+                        {{user}}
+                        <form action="" method="POST">
                             {% csrf_token %}
                             <div class="input-group">
                                 <label for=""> Username: </label>
                                 <input type="text" name="username">
                             </div>
+                            {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                <li></li>{{message}}</li>
+                                   {% endfor %}
+                            </ul>
+                            {% endif %}
                             <div class="input-group">
                                 <label for=""> Password: </label>
                                 <input type="password" name="pass">
@@ -34,11 +42,11 @@
                                 <input value="Log In" type="submit">
                             </div>
                             <div class="pass-forget">
-                                <a href="">Forgatten Passwort?</a>
+                                <a href="">Forgotten Passwort?</a>
                             </div>
                             
                             <div class="submit-btn-neue">
-                                <a href="{% url 'signup' %}" > <input value="Creat New Account" type="submit"> </a>  
+                                <a class="btn btn-primary" role="button" href="{% url 'signup' %}" >Create neu account </a>  
                             </div> 
                         </form>
                         <div class="social-auth">
