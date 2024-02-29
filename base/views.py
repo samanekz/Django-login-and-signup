@@ -20,7 +20,7 @@ def loginPage(request):
             return redirect('home')  
         else:
             messages.error(request, 'Username Or Password does not exit')
-    return render(request, 'base/login_register.html')
+    return render(request, 'base/home.html')
 
 def home(request):
     return render(request, 'base/home.html')
@@ -36,7 +36,7 @@ def myLogin(request):
         user = get_user_model().objects.filter(username=username).first()
         if user is None:
             # user did not exists
-            messages.error(request, 'Bad Credentials!')
+            messages.error(request, 'The username doesn''t exit!')
             return redirect('myLogin')
         user = authenticate(username=username, password=pass1)   
         if user is None:
@@ -44,19 +44,12 @@ def myLogin(request):
             return redirect('myLogin')
         login(request, user,)
         fname=user.first_name
-        return render(request, "base/login_register.html", {'fname': fname})        
+        return render(request, "base/home.html", {'fname': fname})        
             
     return render(request, 'base/login.html')
 
 def signup(request):
     if request.method == "POST":
-       #username = request.POST['username']
-       # fname = request.POST['fname']
-       # lname = request.POST['lname']
-       # email = request.POST['email']
-        #password = request.POST['pass']
-       # repass = request.POST['repass']
-        
         username = request.POST.get('username')
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
@@ -64,7 +57,26 @@ def signup(request):
         password = request.POST.get('pass')
         repass = request.POST.get('repass')
 
-
+        if User.objects.filter(username=username):
+            messages.error(request, "Username already exist! Please try some other username.")
+            return redirect('signup')
+        
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email Already Registered!!")
+            return redirect('signup')
+        
+        if len(username)>20:
+            messages.error(request, "Username must be under 20 charcters!!")
+            return redirect('signup')
+        
+        if password != repass:
+            messages.error(request, "Passwords didn't matched!!")
+            return redirect('signup')
+        
+        if not username.isalnum():
+            messages.error(request, "Username must be Alpha-Numeric!!")
+            return redirect('signup')
+        
         myuser = User.objects.create_user(username, email, password)
         myuser.first_name = fname
         myuser.last_name = lname
@@ -73,9 +85,11 @@ def signup(request):
 
         messages.success(request, 'Your Account has been successfully created')
 
-        return redirect('login')
+        return redirect('myLogin')
     return render(request, 'base/signup.html')
 
-def dashbord(request):
-    return HttpResponse('dashbord')
 
+def signout(request):
+    logout(request)
+    messages.success(request, "Logged out Succeccfully!")
+    return redirect('home')
